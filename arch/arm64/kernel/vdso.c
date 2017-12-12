@@ -27,6 +27,7 @@
 #include <linux/errno.h>
 #include <linux/gfp.h>
 #include <linux/mm.h>
+#include <linux/moduleparam.h>
 #include <linux/sched.h>
 #include <linux/signal.h>
 #include <linux/slab.h>
@@ -315,6 +316,23 @@ void update_vsyscall(struct timekeeper *tk)
 {
 	u32 use_syscall = strcmp(tk->tkr_mono.clock->name, "arch_sys_counter");
 
+#ifdef USE_SYSCALL
+	if (use_syscall) {
+		use_syscall = USE_SYSCALL | USE_SYSCALL_32 | USE_SYSCALL_64;
+	} else {
+#if (defined(__LP64__))
+		if (!enable_64)
+#endif
+			use_syscall = USE_SYSCALL_64;
+#if (!defined(__LP64) || (defined(CONFIG_COMPAT) && defined(CONFIG_VDSO32)))
+		if (!enable_32)
+#endif
+			use_syscall |= USE_SYSCALL_32;
+		if (use_syscall == (USE_SYSCALL_32 | USE_SYSCALL_64))
+			use_syscall |= USE_SYSCALL;
+	}
+#endif
+
 	++vdso_data->tb_seq_count;
 	smp_wmb();
 
@@ -325,7 +343,11 @@ void update_vsyscall(struct timekeeper *tk)
 	vdso_data->wtm_clock_sec		= tk->wall_to_monotonic.tv_sec;
 	vdso_data->wtm_clock_nsec		= tk->wall_to_monotonic.tv_nsec;
 
+#ifdef USE_SYSCALL
+	if (!(use_syscall & USE_SYSCALL)) {
+#else
 	if (!use_syscall) {
+#endif
 		/* tkr_mono.cycle_last == tkr_raw.cycle_last */
 		vdso_data->cs_cycle_last	= tk->tkr_mono.cycle_last;
 		vdso_data->raw_time_sec         = tk->raw_sec;
