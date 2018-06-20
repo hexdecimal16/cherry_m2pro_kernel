@@ -999,4 +999,7 @@ config SECURITY_STATUS
 	  Gets security status by checking oemandroidboot.securityflags
 	  parameter.
 
+config STATE_NOTIFIER
+    bool "State Notifier"
+
 source "drivers/soc/qcom/memshare/Kconfig"
