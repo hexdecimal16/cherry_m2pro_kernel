@@ -29,6 +29,7 @@
 #include <linux/of_gpio.h>
 #include <linux/delay.h>
 #include <linux/completion.h>
+#include <linux/pm_qos.h>
 
 #if defined(CONFIG_FB)
 #include <linux/notifier.h>
@@ -97,6 +98,7 @@ struct hbtp_data {
 static struct hbtp_data *hbtp;
 
 static struct kobject *sensor_kobject;
+static struct pm_qos_request pm_qos_req;
 
 #if defined(CONFIG_FB)
 static int hbtp_fb_early_suspend(struct hbtp_data *ts);
@@ -668,7 +670,10 @@ static long hbtp_input_ioctl_handler(struct file *file, unsigned int cmd,
 			return -EFAULT;
 		}
 
+		/* prevent CPU from entering deep sleep */
+		pm_qos_update_request(&pm_qos_req, 100);
 		hbtp_input_report_events(hbtp, &mt_data);
+		pm_qos_update_request(&pm_qos_req, PM_QOS_DEFAULT_VALUE);
 		error = 0;
 		break;
 
@@ -1461,6 +1466,9 @@ static int hbtp_pdev_probe(struct platform_device *pdev)
 		hbtp->vcc_dig = vcc_dig;
 	}
 
+	pm_qos_add_request(&pm_qos_req, PM_QOS_CPU_DMA_LATENCY,
+			PM_QOS_DEFAULT_VALUE);
+
 	error = hbtp_pdev_power_on(hbtp, true);
 	if (error) {
 		pr_err("%s: failed to power on\n", __func__);
@@ -1482,6 +1490,8 @@ static int hbtp_pdev_remove(struct platform_device *pdev)
 
 	if (hbtp->ts_pinctrl)
 		devm_pinctrl_put(hbtp->ts_pinctrl);
+
+	pm_qos_remove_request(&pm_qos_req);
 
 	return 0;
 }
