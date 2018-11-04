@@ -1111,7 +1111,7 @@ static struct kobject *gesture_kobject;
         return sprintf(buf, "%d\n", allow_gesture);
 }
  static ssize_t gesture_store(struct kobject *kobj, struct kobj_attribute *attr,
-                      char *buf, size_t count)
+                      const char *buf, size_t count)
 {
         sscanf(buf, "%du", &allow_gesture);
 	if (allow_gesture == 0) {
@@ -1132,7 +1132,7 @@ static struct kobject *gesture_kobject;
         return sprintf(buf, "%d\n", screen_gesture);
 }
  static ssize_t screengesture_store(struct kobject *kobj, struct kobj_attribute *attr,
-                      char *buf, size_t count)
+                      const char *buf, size_t count)
 {
         sscanf(buf, "%du", &screen_gesture);
 	if (screen_gesture == 0) {
