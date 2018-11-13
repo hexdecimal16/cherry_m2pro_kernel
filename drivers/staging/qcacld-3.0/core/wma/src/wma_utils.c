@@ -342,6 +342,12 @@ void wma_lost_link_info_handler(tp_wma_handle wma, uint32_t vdev_id,
 	QDF_STATUS qdf_status;
 	cds_msg_t sme_msg = {0};
 
+	if (vdev_id >= wma->max_bssid) {
+		WMA_LOGE("%s: received invalid vdev_id %d",
+			 __func__, vdev_id);
+		return;
+	}
+
 	/* report lost link information only for STA mode */
 	if (wma->interfaces[vdev_id].vdev_up &&
 	    (WMI_VDEV_TYPE_STA == wma->interfaces[vdev_id].type) &&
@@ -5624,11 +5630,10 @@ uint32_t wma_get_vht_ch_width(void)
 uint32_t wma_get_num_of_setbits_from_bitmask(uint32_t mask)
 {
 	uint32_t num_of_setbits = 0;
-	int i = 0;
 
-	while (i < sizeof(mask) * 8) {
-		if ((mask >> i++) & 1)
-			num_of_setbits++;
+	while (mask) {
+		mask &= (mask - 1);
+		num_of_setbits++;
 	}
 	return num_of_setbits;
 }
