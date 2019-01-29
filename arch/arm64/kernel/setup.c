@@ -66,6 +66,10 @@
 #include <asm/xen/hypervisor.h>
 #include <asm/mmu_context.h>
 
+#ifdef CONFIG_FIH_HWCONFIG
+#include <fih/swid.h>
+#endif
+
 unsigned int boot_reason;
 EXPORT_SYMBOL(boot_reason);
 
