@@ -849,5 +849,5 @@ config INPUT_AH1902
        help
          Say Y to enable support for the Diodes AH1902 Hall sensor driver.
 
-source "drivers/input/misc/vl53L0/Kconfig"
+         source "drivers/input/misc/vl53L0/Kconfig"
 endif
