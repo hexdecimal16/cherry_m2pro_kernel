@@ -6,7 +6,6 @@ echo "Welcome To Kernel Source"
 echo "Lets Compile kernel sit Back Have A coffee "
 echo "--------------------------------------------"
 
-chmod a+x qcacld-update.sh
 ./qcacld-update.sh 
 rm -r output
 export ARCH=arm64
