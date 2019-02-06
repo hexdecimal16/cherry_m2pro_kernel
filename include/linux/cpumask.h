@@ -54,8 +54,6 @@ extern int nr_cpu_ids;
  *     cpu_online_mask  - has bit 'cpu' set iff cpu available to scheduler
  *     cpu_active_mask  - has bit 'cpu' set iff cpu available to migration
  *     cpu_isolated_mask- has bit 'cpu' set iff cpu isolated
- *     cpu_lp_mask      - has bit 'cpu' set iff cpu is part of little cluster
- *     cpu_perf_mask    - has bit 'cpu' set iff cpu is part of big cluster
  *
  *  If !CONFIG_HOTPLUG_CPU, present == possible, and active == online.
  *
@@ -88,18 +86,11 @@ extern int nr_cpu_ids;
  *    only one CPU.
  */
 
-extern struct cpumask __cpu_possible_mask;
-extern struct cpumask __cpu_online_mask;
-extern struct cpumask __cpu_present_mask;
-extern struct cpumask __cpu_active_mask;
-extern struct cpumask __cpu_isolated_mask;
-extern const struct cpumask *const cpu_lp_mask;
-extern const struct cpumask *const cpu_perf_mask;
-#define cpu_possible_mask ((const struct cpumask *)&__cpu_possible_mask)
-#define cpu_online_mask   ((const struct cpumask *)&__cpu_online_mask)
-#define cpu_present_mask  ((const struct cpumask *)&__cpu_present_mask)
-#define cpu_active_mask   ((const struct cpumask *)&__cpu_active_mask)
-#define cpu_isolated_mask ((const struct cpumask *)&__cpu_isolated_mask)
+extern const struct cpumask *const cpu_possible_mask;
+extern const struct cpumask *const cpu_online_mask;
+extern const struct cpumask *const cpu_present_mask;
+extern const struct cpumask *const cpu_active_mask;
+extern const struct cpumask *const cpu_isolated_mask;
 
 #if NR_CPUS > 1
 #define num_online_cpus()	cpumask_weight(cpu_online_mask)
