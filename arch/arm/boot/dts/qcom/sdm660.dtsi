@@ -309,9 +309,6 @@
 		android {
 			compatible = "android,firmware";
 			fstab {
-				    system {
-				            fsmgr_flags = "wait";
-			        };
 				compatible = "android,fstab";
 				vendor {
 					compatible = "android,vendor";
