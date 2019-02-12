@@ -82,7 +82,7 @@ config IOSCHED_FIOPS
 
 choice
 	prompt "Default I/O scheduler"
-	default DEFAULT_MAPLE
+	default DEFAULT_ZEN
 	help
 	  Select the I/O scheduler which will be used by default for all
 	  block devices.
@@ -104,6 +104,7 @@ choice
 
 	config DEFAULT_ZEN
 		bool "ZEN" if IOSCHED_ZEN=y
+	
 	config DEFAULT_MAPLE
 		bool "Maple" if IOSCHED_MAPLE=y
 
