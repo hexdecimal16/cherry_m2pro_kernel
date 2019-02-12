@@ -21,6 +21,10 @@
 bool fsync_enabled = true;
 module_param(fsync_enabled, bool, 0755);
 
+#ifdef CONFIG_DYNAMIC_FSYNC
+#include <linux/dyn_sync_cntrl.h>
+#endif
+
 #define VALID_FLAGS (SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE| \
 			SYNC_FILE_RANGE_WAIT_AFTER)
 
@@ -98,6 +102,7 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
 	filemap_fdatawait_keep_errors(bdev->bd_inode->i_mapping);
 }
 
+#ifdef CONFIG_DYNAMIC_FSYNC
 /*
  * Sync all the data for all the filesystems (called by sys_sync() and
  * emergency sync)
@@ -215,6 +220,7 @@ int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
 
         if (!fsync_enabled)
 		return 0;
+
 #ifdef CONFIG_DYNAMIC_FSYNC
 	if (dyn_fsync_active && suspend_active)
 		return 0;
@@ -279,6 +285,7 @@ SYSCALL_DEFINE1(fsync, unsigned int, fd)
 
 SYSCALL_DEFINE1(fdatasync, unsigned int, fd)
 {
+
 #ifdef CONFIG_DYNAMIC_FSYNC
 	if (dyn_fsync_active && suspend_active)
 		return 0;
@@ -344,6 +351,7 @@ SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
 
         if (!fsync_enabled)
 		return 0;
+
 #ifdef CONFIG_DYNAMIC_FSYNC
 	if (dyn_fsync_active && suspend_active)
 		return 0;
@@ -429,6 +437,7 @@ out:
 SYSCALL_DEFINE4(sync_file_range2, int, fd, unsigned int, flags,
 				 loff_t, offset, loff_t, nbytes)
 {
+
 #ifdef CONFIG_DYNAMIC_FSYNC
 	if (dyn_fsync_active && suspend_active)
 		return 0;
