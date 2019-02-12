@@ -119,8 +119,6 @@ void sync_filesystems(int nowait)
 	iterate_bdevs(fdatawrite_one_bdev, NULL);
 	iterate_bdevs(fdatawait_one_bdev, NULL);
 }
-#endif
-
 
 /*
  * Sync everything. We start by waking flusher threads so that most of
