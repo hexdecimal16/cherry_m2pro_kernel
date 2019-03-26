@@ -14,9 +14,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_USERSPACE)	+= cpufreq_userspace.o
 obj-$(CONFIG_CPU_FREQ_GOV_ONDEMAND)	+= cpufreq_ondemand.o
 obj-$(CONFIG_CPU_FREQ_GOV_CONSERVATIVE)	+= cpufreq_conservative.o
 obj-$(CONFIG_CPU_FREQ_GOV_INTERACTIVE)	+= cpufreq_interactive.o
-# 14bde3b... cpufreq: Add Darkness Governer
-obj-$(CONFIG_CPU_FREQ_GOV_COMMON)	+= cpufreq_governor.o
-obj-$(CONFIG_CPU_FREQ_GOV_DARKNESS)     += cpufreq_darkness.o
+obj-$(CONFIG_CPU_FREQ_GOV_COMMON)		+= cpufreq_governor.o
 obj-$(CONFIG_CPU_FREQ_GOV_TRIPNDROID)	+= cpufreq_tripndroid.o
 obj-$(CONFIG_CPU_BOOST)			+= cpu-boost.o
 obj-$(CONFIG_CPU_FREQ_GOV_INTELLIACTIVE)	+= cpufreq_intelliactive.o
@@ -27,6 +25,7 @@ CFLAGS_cpufreq_intellidemand.o += -Wno-unused-variable
 obj-$(CONFIG_CPU_INPUT_BOOST)		+= cpu_input_boost.o
 
 obj-$(CONFIG_CPUFREQ_DT)		+= cpufreq-dt.o
+
 ##################################################################################
 # x86 drivers.
 # Link order matters. K8 is preferred to ACPI because of firmware bugs in early
