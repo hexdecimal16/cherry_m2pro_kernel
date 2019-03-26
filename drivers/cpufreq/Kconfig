@@ -226,17 +226,6 @@ config CPU_FREQ_GOV_ONDEMAND
 config CPU_FREQ_GOV_DARKNESS
  	tristate "'darkness' cpufreq policy governor"
 
-config CPU_FREQ_DEFAULT_GOV_INTELLIACTIVE
-	bool "intelliactive"
-	select CPU_FREQ_GOV_INTELLIACTIVE
-	help
-
-config CPU_FREQ_DEFAULT_GOV_INTELLIDEMAND
-	bool "intellidemand"
-	select CPU_FREQ_GOV_INTELLIDEMAND
-	help
-
-
 config CPU_FREQ_GOV_INTERACTIVE
 	bool "'interactive' cpufreq policy governor"
 	help
