@@ -25,6 +25,7 @@
 #include "battery.h"
 #include "step-chg-jeita.h"
 #include "storm-watch.h"
+#include "fg-core.h"
 
 #define smblib_err(chg, fmt, ...)		\
 	pr_err("%s: %s: " fmt, chg->name,	\
@@ -1823,6 +1824,21 @@ int smblib_get_prop_from_bms(struct smb_charger *chg,
 	rc = power_supply_get_property(chg->bms_psy, psp, val);
 
 	return rc;
+}
+
+int smblib_get_prop_battery_full_design(struct smb_charger *chg,
+				     union power_supply_propval *val)
+{
+	struct fg_chip *chip;
+
+	if (!chg->bms_psy)
+		return -EINVAL;
+	chip = power_supply_get_drvdata(chg->bms_psy);
+	if (chip->battery_full_design)
+		val->intval =  chip->battery_full_design;
+	else
+		val->intval = 4000;
+	return 0;
 }
 
 /***********************
