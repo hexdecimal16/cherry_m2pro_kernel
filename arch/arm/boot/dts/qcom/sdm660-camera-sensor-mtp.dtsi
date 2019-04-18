@@ -301,7 +301,7 @@
 		compatible = "qcom,camera";
 		reg = <0x1>;
 		qcom,csiphy-sd-index = <1>;
-		qcom,csid-sd-index = <2>;
+		qcom,csid-sd-index = <1>;
 		qcom,mount-angle = <90>;
 		qcom,led-flash-src = <&led_flash0>;
 		qcom,actuator-src = <&actuator1>;
