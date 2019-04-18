@@ -82,6 +82,9 @@
 		qcom,cam-vreg-min-voltage = <3600000>;
 		qcom,cam-vreg-max-voltage = <3600000>;
 		qcom,cam-vreg-op-mode = <0>;
+		pinctrl-names = "cam_default", "cam_suspend";
+		pinctrl-0 = <&cam_actuator_vaf_active0>;
+		pinctrl-1 = <&cam_actuator_vaf_suspend0>;
 	};
 
 	actuator1: qcom,actuator@1 {
@@ -94,6 +97,9 @@
 		qcom,cam-vreg-min-voltage = <3600000>;
 		qcom,cam-vreg-max-voltage = <3600000>;
 		qcom,cam-vreg-op-mode = <0>;
+		pinctrl-names = "cam_default", "cam_suspend";
+		pinctrl-0 = <&cam_actuator_vaf_active>;
+		pinctrl-1 = <&cam_actuator_vaf_suspend>;
 	};
 
 	actuator2: qcom,actuator@2 {
@@ -106,6 +112,9 @@
 		qcom,cam-vreg-min-voltage = <3600000>;
 		qcom,cam-vreg-max-voltage = <3600000>;
 		qcom,cam-vreg-op-mode = <0>;
+		pinctrl-names = "cam_default", "cam_suspend";
+		pinctrl-0 = <&cam_actuator_vaf_active>;
+		pinctrl-1 = <&cam_actuator_vaf_suspend>;
 	};
 
 	ois0: qcom,ois@0 {
@@ -118,6 +127,9 @@
 		qcom,cam-vreg-min-voltage = <3600000>;
 		qcom,cam-vreg-max-voltage = <3600000>;
 		qcom,cam-vreg-op-mode = <0>;
+		pinctrl-names = "cam_default", "cam_suspend";
+		pinctrl-0 = <&cam_actuator_vaf_active0>;
+		pinctrl-1 = <&cam_actuator_vaf_suspend0>;
 		status = "disabled";
 	};
 
@@ -254,6 +266,8 @@
 		clock-names = "cam_src_clk", "cam_clk";
 		qcom,clock-rates = <24000000 0>;
 	};
+
+
 
 	qcom,camera@0 {
 		cell-index = <0>;
