@@ -1,4 +1,4 @@
-CONFIG_LOCALVERSION="-Cherry"
+CONFIG_LOCALVERSION="-Cherry-1.5"
 
 #Cherry changes
 CONFIG_WIREGUARD=y
