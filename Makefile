@@ -15,6 +15,9 @@ NAME = Blurry Fish Butt
 # o Look for make include files relative to root of kernel src
 MAKEFLAGS += -rR --include-dir=$(CURDIR)
 
+#Temporary fix to avoid incompatible-pointer-types error
+USER_EXTRA_CFLAGS=-Wno-error=incompatible-pointer-types
+
 # Avoid funny character set dependencies
 unexport LC_ALL
 LC_COLLATE=C
