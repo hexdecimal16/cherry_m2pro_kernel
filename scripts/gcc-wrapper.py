@@ -49,13 +49,13 @@ allowed_warnings = set([
 # Capture the name of the object file, can find it.
 ofile = None
 
-warning_re = re.compile(r'''(.*/|)([^/]+\.[a-z]+:\d+):(\d+:)? warning:''')
+warning_re = re.compile(r'''(./|)([^/]+\.[a-z]+:\d+):(\d+:)? warning:''')
 def interpret_warning(line):
     """Decode the message from gcc.  The messages we care about have a filename, and a warning"""
     line = line.rstrip('\n')
     m = warning_re.match(line)
     if m and m.group(2) not in allowed_warnings:
-        print "error, forbidden warning:", m.group(2)
+        print >> sys.stderr, "error, forbidden warning:", m.group(2)
 
         # If there is a warning, remove any object if it exists.
         if ofile:
@@ -80,17 +80,17 @@ def run_gcc():
     try:
         proc = subprocess.Popen(args, stderr=subprocess.PIPE)
         for line in proc.stderr:
-            print line,
+            print >> sys.stderr, line,
             interpret_warning(line)
 
         result = proc.wait()
     except OSError as e:
         result = e.errno
         if result == errno.ENOENT:
-            print args[0] + ':',e.strerror
-            print 'Is your PATH set correctly?'
+            print >> sys.stderr, args[0] + ':',e.strerror
+            print >> sys.stderr, 'Is your PATH set correctly?'
         else:
-            print ' '.join(args), str(e)
+            print >> sys.stderr, ' '.join(args), str(e)
 
     return result
 
