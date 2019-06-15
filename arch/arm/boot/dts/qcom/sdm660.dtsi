@@ -1415,6 +1415,7 @@
 			< 1804800 >,
 			< 1958400 >,
 			< 2150400 >;
+	};
 
 	sdhc_1: sdhci@c0c4000 {
 		compatible = "qcom,sdhci-msm-v5";
