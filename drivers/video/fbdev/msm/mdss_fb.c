@@ -3589,7 +3589,7 @@ static int mdss_fb_pan_display(struct fb_var_screeninfo *var,
 	 * operations until that happens
 	 */
 	if (mfd->switch_state != MDSS_MDP_NO_UPDATE_REQUESTED) {
-		pr_debug("fb%d: pan_display skipped during switch\n",
+		pr_debug("fb%d: pan_display skipped during switch or handoff\n",
 				mfd->index);
 		return 0;
 	}
