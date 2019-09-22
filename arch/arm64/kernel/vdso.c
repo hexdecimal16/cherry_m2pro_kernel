@@ -27,7 +27,6 @@
 #include <linux/errno.h>
 #include <linux/gfp.h>
 #include <linux/mm.h>
-#include <linux/moduleparam.h>
 #include <linux/sched.h>
 #include <linux/signal.h>
 #include <linux/slab.h>
@@ -39,9 +38,11 @@
 #include <asm/vdso.h>
 #include <asm/vdso_datapage.h>
 
-extern char vdso_start[], vdso_end[];
-static unsigned long vdso_pages;
-static struct page **vdso_pagelist;
+struct vdso_mappings {
+	unsigned long num_code_pages;
+	struct vm_special_mapping data_mapping;
+	struct vm_special_mapping code_mapping;
+};
 
 /*
  * The vDSO data page.
@@ -169,14 +170,15 @@ static int __init vdso_mappings_init(const char *name,
 	struct page **vdso_pagelist;
 	unsigned long pfn;
 
-	if (memcmp(vdso_start, "\177ELF", 4)) {
-		pr_err("vDSO is not a valid ELF object!\n");
+	if (memcmp(code_start, "\177ELF", 4)) {
+		pr_err("%s is not a valid ELF object!\n", name);
 		return -EINVAL;
 	}
 
-	vdso_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
-	pr_info("vdso: %ld pages (%ld code @ %p, %ld data @ %p)\n",
-		vdso_pages + 1, vdso_pages, vdso_start, 1L, vdso_data);
+	vdso_pages = (code_end - code_start) >> PAGE_SHIFT;
+	pr_info("%s: %ld pages (%ld code @ %p, %ld data @ %p)\n",
+		name, vdso_pages + 1, vdso_pages, code_start, 1L,
+		vdso_data);
 
 	/*
 	 * Allocate space for storing pointers to the vDSO code pages + the
@@ -193,7 +195,7 @@ static int __init vdso_mappings_init(const char *name,
 	vdso_pagelist[0] = phys_to_page(__pa_symbol(vdso_data));
 
 	/* Grab the vDSO code pages. */
-	pfn = sym_to_pfn(vdso_start);
+	pfn = sym_to_pfn(code_start);
 
 	for (i = 0; i < vdso_pages; i++)
 		vdso_pagelist[i + 1] = pfn_to_page(pfn + i);
@@ -316,23 +318,6 @@ void update_vsyscall(struct timekeeper *tk)
 {
 	u32 use_syscall = strcmp(tk->tkr_mono.clock->name, "arch_sys_counter");
 
-#ifdef USE_SYSCALL
-	if (use_syscall) {
-		use_syscall = USE_SYSCALL | USE_SYSCALL_32 | USE_SYSCALL_64;
-	} else {
-#if (defined(__LP64__))
-		if (!enable_64)
-#endif
-			use_syscall = USE_SYSCALL_64;
-#if (!defined(__LP64) || (defined(CONFIG_COMPAT) && defined(CONFIG_VDSO32)))
-		if (!enable_32)
-#endif
-			use_syscall |= USE_SYSCALL_32;
-		if (use_syscall == (USE_SYSCALL_32 | USE_SYSCALL_64))
-			use_syscall |= USE_SYSCALL;
-	}
-#endif
-
 	++vdso_data->tb_seq_count;
 	smp_wmb();
 
@@ -343,11 +328,7 @@ void update_vsyscall(struct timekeeper *tk)
 	vdso_data->wtm_clock_sec		= tk->wall_to_monotonic.tv_sec;
 	vdso_data->wtm_clock_nsec		= tk->wall_to_monotonic.tv_nsec;
 
-#ifdef USE_SYSCALL
-	if (!(use_syscall & USE_SYSCALL)) {
-#else
 	if (!use_syscall) {
-#endif
 		struct timespec btm = ktime_to_timespec(tk->offs_boot);
 
 		/* tkr_mono.cycle_last == tkr_raw.cycle_last */
@@ -355,7 +336,8 @@ void update_vsyscall(struct timekeeper *tk)
 		vdso_data->raw_time_sec         = tk->raw_sec;
 		vdso_data->raw_time_nsec        = tk->tkr_raw.xtime_nsec;
 		vdso_data->xtime_clock_sec	= tk->xtime_sec;
-		vdso_data->xtime_clock_nsec	= tk->tkr_mono.xtime_nsec;
+		vdso_data->xtime_clock_snsec	= tk->tkr_mono.xtime_nsec;
+		/* tkr_raw.xtime_nsec == 0 */
 		vdso_data->cs_mono_mult		= tk->tkr_mono.mult;
 		vdso_data->cs_raw_mult		= tk->tkr_raw.mult;
 		/* tkr_mono.shift == tkr_raw.shift */
